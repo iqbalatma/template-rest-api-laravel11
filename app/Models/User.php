@@ -3,13 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Table;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Iqbalatma\LaravelJwtAuthentication\Interfaces\JWTSubject;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property string id
@@ -24,10 +27,13 @@ use Iqbalatma\LaravelJwtAuthentication\Interfaces\JWTSubject;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Carbon deleted_at
+ * @property Profile profile
  */
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasUuids;
+    use HasFactory, Notifiable, HasUuids, HasRoles;
+
+    protected $table = Table::USERS->value;
 
     /**
      * The attributes that are mass assignable.
@@ -89,5 +95,14 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims():array
     {
         return [];
+    }
+
+
+    /**
+     * @return HasOne
+     */
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class, "id", "id");
     }
 }
