@@ -16,7 +16,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("audits", function (Blueprint $table) {
+        Schema::create(\App\Enums\Table::AUDITS->value, function (Blueprint $table) {
             $table->uuid("id")->primary();
 
             $table->string("message")->nullable();
@@ -57,6 +57,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists("audits");
+        Schema::dropIfExists(\App\Enums\Table::AUDITS->value);
     }
 };
