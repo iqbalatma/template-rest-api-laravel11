@@ -74,10 +74,10 @@ class User extends Authenticatable implements JWTSubject
     /**
      * @return Attribute
      */
-    protected function full_name(): Attribute
+    protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn(mixed $value, array $attributes) => $attributes["first_name"] . " " . $attributes["last_name"] ?? ""
+            get: fn () => $this->firstname . ' ' . $this->lastname,
         );
     }
 

@@ -18,9 +18,9 @@ class AuthenticateResource extends JsonResource
         $user = $this["user"];
         return [
             "id" => $user->id,
-            "firstname" => $user->firstname,
-            "lastname" => $user->lastname,
-            "fullname" => $user->fullname,
+            "first_name" => $user->first_name,
+            "last_name" => $user->last_name,
+            "full_name" => $user->full_name,
             "email" => $user->email,
             "phone_number" => $user->phone_number,
             "address" => $user->profile?->address,
