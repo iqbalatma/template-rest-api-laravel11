@@ -8,23 +8,19 @@ use App\Models\Role;
 use App\Repositories\RoleRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Iqbalatma\LaravelServiceRepo\Attributes\ServiceRepository;
 use Iqbalatma\LaravelServiceRepo\Exceptions\EmptyDataException;
 
 /**
  * @method  Role getServiceEntity()
  */
+#[ServiceRepository(RoleRepository::class)]
 class RoleService extends BaseService
 {
-    protected $repository;
     protected Role $role;
     protected array $roleBeforeUpdate;
     protected array $permissionBeforeUpdate;
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->repository = new RoleRepository();
-    }
 
     /**
      * @return Collection
@@ -34,16 +30,6 @@ class RoleService extends BaseService
         return RoleRepository::getAllData();
     }
 
-    /**
-     * @param string|int $id
-     * @return Role
-     * @throws EmptyDataException
-     */
-    public function getDataById(string|int $id): Role
-    {
-        $this->checkData($id);
-        return $this->getServiceEntity();
-    }
 
     /**
      * @param array $requestedData

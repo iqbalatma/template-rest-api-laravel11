@@ -64,7 +64,7 @@ return [
     | also change console generated parent class of Repository
     |
     */
-    "base_repository_parent_class" => "Iqbalatma\LaravelServiceRepo\BaseRepository",
+    "base_repository_parent_class" => "App\Contracts\Abstracts\BaseRepository",
 
 
     /*

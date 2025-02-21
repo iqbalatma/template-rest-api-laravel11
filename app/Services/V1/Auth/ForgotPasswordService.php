@@ -10,18 +10,12 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Iqbalatma\LaravelServiceRepo\Attributes\ServiceRepository;
 use Iqbalatma\LaravelServiceRepo\Exceptions\EmptyDataException;
 
+#[ServiceRepository(UserRepository::class)]
 class ForgotPasswordService extends BaseService
 {
-    protected $repository;
-
-    public function __construct()
-    {
-        $this->repository = new UserRepository();
-    }
-
-
     /**
      * @param array $requestedData
      * @return void

@@ -2,6 +2,6 @@
 
 namespace App\Contracts\Abstracts\Services;
 
-abstract class BaseService {
+abstract class BaseService extends \Iqbalatma\LaravelServiceRepo\BaseService {
 
 }

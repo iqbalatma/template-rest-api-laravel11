@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repositories;
-use Iqbalatma\LaravelServiceRepo\BaseRepository;
+use App\Contracts\Abstracts\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\User;
 
