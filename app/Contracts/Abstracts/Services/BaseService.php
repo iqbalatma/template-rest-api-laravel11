@@ -2,6 +2,8 @@
 
 namespace App\Contracts\Abstracts\Services;
 
-abstract class BaseService extends \Iqbalatma\LaravelServiceRepo\BaseService {
+use Iqbalatma\LaravelAudit\AuditService;
 
+abstract class BaseService extends \Iqbalatma\LaravelServiceRepo\BaseService {
+    public AuditService $auditService;
 }
