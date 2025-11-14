@@ -3,6 +3,28 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | JWT library guard
+    |--------------------------------------------------------------------------
+    |
+    | This is guard that set in auth, because inside library guard defined manually
+    | Auth::guard(config("jwt.guard"));
+    |
+    */
+    "guard" => "jwt",
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Access token verifier
+    |--------------------------------------------------------------------------
+    |
+    | This is configuration to prevent xss attack by verified access token via cookie httpOnly
+    |
+    */
+    "is_using_access_token_verifier" => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | JWT Sign in Algorithm
     |--------------------------------------------------------------------------
     |
@@ -68,6 +90,8 @@ return [
     | This is TTL (Time To Life) for access token. When token is expired, the token
     | is already invalid. Access token using to access protected resource.
     | Middleware that can accept this token is auth.jwt:access
+    | This TTL is in seconds
+    | Default 1 Hour
     |
     */
     'access_token_ttl' => env('JWT_TTL', 60 * 60),
@@ -82,7 +106,51 @@ return [
     | is already invalid. Refresh token using to regenerate access token and refresh token
     | and revoke previous access token and refresh token.
     | Middleware that can accept this token is auth.jwt:refresh
-    |
+    | This TTL is in seconds
+    | Default 7 Days
     */
     'refresh_token_ttl' => env('JWT_REFRESH_TTL', 60 * 60 * 24 * 7),
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Refresh Token
+    |--------------------------------------------------------------------------
+    |
+    | Refresh token mechanism is how middleware check/get your refresh token
+    | there are two options (cookie / header)
+    |
+    |
+    | Refresh token key is key to get when middleware mechanism choose cookie, so this key
+    | is used to get cookie to set refresh token
+    |
+    */
+    'refresh_token' => [
+        'key' => 'jwt_refresh_token',
+        'http_only' => true,
+        'path' => "/",
+        'domain' => null,
+        'secure' => true,
+        'same_site' => 'lax',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Access Token Verifier
+    |--------------------------------------------------------------------------
+    |
+    | Access token verifier is used to prevent XSS attack by binding access token
+    | to this verifier, and make sure any stolen token cannot be used by attacker
+    |
+    |
+    */
+    'access_token_verifier' => [
+        'key' => 'access_token_verifier',
+        'http_only' => true,
+        'path' => "/",
+        'domain' => null,
+        'secure' => true,
+        'same_site' => 'lax',
+    ]
 ];

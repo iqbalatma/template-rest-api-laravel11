@@ -11,8 +11,8 @@ Route::get('/user', function (Request $request) {
 Route::prefix("v1")->name("v1.")->group(function () {
     Route::prefix("auth")->name("auth.")->controller(\App\Http\Controllers\API\V1\Auth\AuthenticationController::class)->group(function () {
         Route::post("", "authenticate")->name("authenticate");
-        Route::post("logout", "logout")->name("logout")->middleware("auth.jwt:access");
-        Route::post("refresh", "refresh")->name("refresh")->middleware("auth.jwt:refresh");
+        Route::post("logout", "logout")->name("logout")->middleware("auth.jwt:ACCESS");
+        Route::post("refresh", "refresh")->name("refresh")->middleware("auth.jwt:REFRESH");
     });
 
     Route::prefix("forgot-password")->name("forgot.password")->controller(\App\Http\Controllers\API\V1\Auth\ForgotPasswordController::class)->group(function (){
@@ -20,7 +20,7 @@ Route::prefix("v1")->name("v1.")->group(function () {
         Route::post("/reset", "reset")->name("reset");
     });
 
-    Route::middleware("auth.jwt")->group(function () {
+    Route::middleware("auth.jwt:ACCESS")->group(function () {
         Route::prefix("management")->name("management.")->group(function () {
             Route::prefix("users")->name("users.")->controller(\App\Http\Controllers\API\V1\Management\UserController::class)->group(function () {
                 Route::get("", "index")->name("index");

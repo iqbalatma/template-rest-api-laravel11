@@ -5,9 +5,12 @@ namespace App\Http\Controllers\API\V1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Auth\AuthenticateRequest;
 use App\Http\Resources\V1\Auth\AuthenticateResource;
+use App\Models\User;
 use App\Services\V1\Auth\AuthenticationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Iqbalatma\LaravelUtils\APIResponse;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
 
 class AuthenticationController extends Controller
@@ -26,17 +29,35 @@ class AuthenticationController extends Controller
     /**
      * @param AuthenticationService $service
      * @param AuthenticateRequest $request
-     * @return APIResponse
-     * @throws Throwable
+     * @return JsonResponse|APIResponse
      */
-    public function authenticate(AuthenticationService $service, AuthenticateRequest $request): APIResponse
+    public function authenticate(AuthenticationService $service, AuthenticateRequest $request): JsonResponse|APIResponse
     {
-        $response = $service->authenticate($request->validated());
+        $credentials = request(['email', 'password']);
+        if (!$token = Auth::attempt($credentials)) {
+            throw new UnauthorizedHttpException("Invalid credentials");
+        }
 
-        return new APIResponse(
-            new AuthenticateResource($response),
-            $this->getResponseMessage(__FUNCTION__)
-        );
+        /** @var User $user */
+        $user = Auth::user();
+        return response()->json(
+            [
+                "code" => "SUCCESS",
+                "message" => "Logged in successfully.",
+                "timestamp" => now(),
+                "payload" => [
+                    "data" => [
+                        "id" => $user->id,
+                        "first_name" => $user->first_name,
+                        "last_name" => $user->last_name,
+                        "email" => $user->email,
+                        "access_token" => Auth::getAccessToken(),
+                    ],
+                ],
+            ]
+        )
+            ->withCookie(getCreatedCookieAccessTokenVerifier(Auth::getAccessTokenVerifier()))
+            ->withCookie(getCreatedCookieRefreshToken(Auth::getRefreshToken()));
     }
 
     /**
@@ -44,7 +65,7 @@ class AuthenticationController extends Controller
      */
     public function logout(): APIResponse
     {
-        Auth::logout();
+        Auth::logout(true);
 
         return new APIResponse(message: $this->getResponseMessage(__FUNCTION__));
     }
@@ -52,14 +73,31 @@ class AuthenticationController extends Controller
 
     /**
      * @param AuthenticationService $service
-     * @return APIResponse
+     * @return JsonResponse|APIResponse
      */
-    public function refresh(AuthenticationService $service): APIResponse
+    public function refresh(AuthenticationService $service): JsonResponse|APIResponse
     {
-        $response = $service->refreshToken();
-        return new APIResponse(
-            new AuthenticateResource($response),
-            $this->getResponseMessage(__FUNCTION__)
-        );
+        Auth::refreshToken(Auth::user());
+
+        /** @var User $user */
+        $user = Auth::user();
+        return response()->json(
+            [
+                "code" => "SUCCESS",
+                "message" => "Logged in successfully.",
+                "timestamp" => now(),
+                "payload" => [
+                    "data" => [
+                        "id" => $user->id,
+                        "first_name" => $user->first_name,
+                        "last_name" => $user->last_name,
+                        "email" => $user->email,
+                        "access_token" => Auth::getAccessToken()
+                    ],
+                ],
+            ]
+        )
+            ->withCookie(getCreatedCookieAccessTokenVerifier(Auth::getAccessTokenVerifier()))
+            ->withCookie(getCreatedCookieRefreshToken(Auth::getRefreshToken()));
     }
 }
